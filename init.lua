@@ -24,20 +24,24 @@ local check_msgs = function (pos)
 end
 
 local register = function (pos)
+	local meta = minetest.env:get_meta(pos)
 	print("was " .. #receivers .. " receivers")
-	table.insert(receivers, pos)
+	if receivers[RID] == nil then
+		table.insert(receivers, pos)
+	end
 	print("now " .. #receivers .. " receivers")
-	return #receivers --return receiver ID 
+	meta:set_int("RID", #receivers)
+	
 end
 
-local reregister = function (pos)
-	local meta = minetest.env:get_meta(pos)
-	local RID = meta:get_int("RID")
-	if receivers[RID] == nil then
-		print("Re-registering")
-		meta:set_int("RID", register(pos))
-	end
-end
+--~ local reregister = function (pos)
+--~ 	local meta = minetest.env:get_meta(pos)
+--~ 	local RID = meta:get_int("RID")
+--~ 	
+--~ 		print("Re-registering")
+--~ 		register(pos))
+--~ 	end
+--~ end
 -- ================
 -- ABM declarations
  -- ================
@@ -47,7 +51,7 @@ interval=1.0,
 chance=1,
 action = function(pos) 
 	check_msgs(pos)
-	reregister(pos)
+	register(pos)
 end
 })
 
@@ -78,7 +82,7 @@ minetest.register_node("wireless:recv", {  -- Relays wireless to digiline
 		meta:set_string("infotext", "Wireless digiline receiver")
 		meta:set_string("msg1","")
 		meta:set_string("chan1","")
-		meta:set_int("RID", register(pos))  --register and record RID
+		 register(pos)  --register and record RID
 	end,
 	on_punch = function(pos)
 		check_msgs(pos)
