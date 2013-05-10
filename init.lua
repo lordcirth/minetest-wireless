@@ -33,15 +33,6 @@ local register = function (pos)
 	meta:set_int("RID", #receivers)
 	
 end
-
---~ local reregister = function (pos)
---~ 	local meta = minetest.env:get_meta(pos)
---~ 	local RID = meta:get_int("RID")
---~ 	
---~ 		print("Re-registering")
---~ 		register(pos))
---~ 	end
---~ end
 -- ================
 -- ABM declarations
  -- ================
