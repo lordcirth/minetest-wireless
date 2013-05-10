@@ -6,9 +6,10 @@ local on_digiline_receive = function (pos, node, channel, msg)
 	print("digiline received")
 	for i=1, #receivers do  -- Iterate over receivers
 		local target_meta = minetest.env:get_meta(receivers[i])
-		target_meta:set_string("chan1", channel)
-		target_meta:set_string("msg1", msg)
-		
+		if chan1~="" and msg1 ~= "" then  --don't overwrite queued msgs
+			target_meta:set_string("chan1", channel)
+			target_meta:set_string("msg1", msg)
+		end
 	end
 end
 
@@ -25,11 +26,12 @@ end
 
 local register = function (pos)
 	local meta = minetest.env:get_meta(pos)
-	print("was " .. #receivers .. " receivers")
+	local RID = meta:get_int("RID")
+	--print("was " .. #receivers .. " receivers")
 	if receivers[RID] == nil then
 		table.insert(receivers, pos)
 	end
-	print("now " .. #receivers .. " receivers")
+	--print("now " .. #receivers .. " receivers")
 	meta:set_int("RID", #receivers)
 	
 end
