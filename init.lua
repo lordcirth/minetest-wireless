@@ -4,47 +4,45 @@ receivers = {}
  -- ================
 
  function getspec(node)
-	print(tostring(node))
 	if not minetest.registered_nodes[node.name] then return false end -- ignore unknown nodes
 	return minetest.registered_nodes[node.name].wireless
 end
  
+ function get_range(pos, target_pos)
+	local x_dist = target_pos.x - pos.x
+	local y_dist = target_pos.y - pos.y
+	local z_dist = target_pos.z- pos.z
+	local dist = math.sqrt(x_dist^2 + y_dist^2 + z_dist^2)
+	return dist
+ end
+ 
  local on_digiline_receive = function (pos, node, channel, msg)
+	local range = 25 
 	print("digiline received")
 	for i=1, #receivers do  -- Iterate over receivers
-		-- print(tostring(receivers[i]))
-		local target_meta = minetest.env:get_meta(receivers[i])
-		local target_node = minetest.env:get_node(receivers[i])
-		-- print(tostring(tar))
-		local target_spec = getspec(target_node)
-		if chan1~="" and msg1 ~= "" then  -- don't overwrite queued msgs
-			target_meta:set_string("chan1", channel)
-			target_meta:set_string("msg1", msg)
+		if get_range(pos, receivers[i]) <= range then -- max range
+			local target_node = minetest.env:get_node(receivers[i])
+			local target_spec = getspec(target_node)	
+			target_spec.receiver.action(receivers[i], channel, msg)
 		end
-		target_spec.receiver.action(receivers[i])
 	end
 end
 
-local check_msgs = function (pos)
+local check_msgs = function (pos, channel, msg)
 	local meta = minetest.env:get_meta(pos)
-	local msg1 = meta:get_string("msg1")
-	local chan1 = meta:get_string("chan1")
 	if chan1~="" and msg1 ~= "" then  --don't send blank digiline msgs
-		digiline:receptor_send(pos, digiline.rules.default,chan1, msg1)
+		digiline:receptor_send(pos, digiline.rules.default,channel, msg)
 	end
-	meta:set_string("chan1", "")  -- clear msg so it won't be resent every second
-	meta:set_string("msg1", "")  --
 end
 
 local register = function (pos)
 	local meta = minetest.env:get_meta(pos)
 	local RID = meta:get_int("RID")
-	--print("was " .. #receivers .. " receivers")
 	if receivers[RID] == nil then
 		table.insert(receivers, pos)
+		meta:set_int("RID", #receivers)
 	end
-	--print("now " .. #receivers .. " receivers")
-	meta:set_int("RID", #receivers)
+	
 	
 end
 -- ================
@@ -70,7 +68,6 @@ minetest.register_node("wireless:recv", {  -- Relays wireless to digiline
 	digiline = --declare as digiline-capable
 	{
 		receptor = {},
-		--effector = {},
 	},
 	wireless = {
 		receiver = {
@@ -90,8 +87,6 @@ minetest.register_node("wireless:recv", {  -- Relays wireless to digiline
 	on_construct = function(pos)
 		local meta = minetest.env:get_meta(pos)
 		meta:set_string("infotext", "Wireless digiline receiver")
-		meta:set_string("msg1","")
-		meta:set_string("chan1","")
 		 register(pos)  --register and record RID
 	end,
 	on_punch = function(pos)
