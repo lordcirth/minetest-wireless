@@ -2,14 +2,26 @@ receivers = {}
 -- ================
 -- Function declarations
  -- ================
-local on_digiline_receive = function (pos, node, channel, msg)
+
+ function getspec(node)
+	print(tostring(node))
+	if not minetest.registered_nodes[node.name] then return false end -- ignore unknown nodes
+	return minetest.registered_nodes[node.name].wireless
+end
+ 
+ local on_digiline_receive = function (pos, node, channel, msg)
 	print("digiline received")
 	for i=1, #receivers do  -- Iterate over receivers
+		-- print(tostring(receivers[i]))
 		local target_meta = minetest.env:get_meta(receivers[i])
-		if chan1~="" and msg1 ~= "" then  --don't overwrite queued msgs
+		local target_node = minetest.env:get_node(receivers[i])
+		-- print(tostring(tar))
+		local target_spec = getspec(target_node)
+		if chan1~="" and msg1 ~= "" then  -- don't overwrite queued msgs
 			target_meta:set_string("chan1", channel)
 			target_meta:set_string("msg1", msg)
 		end
+		target_spec.receiver.action(receivers[i])
 	end
 end
 
@@ -43,7 +55,7 @@ nodenames = {"wireless:recv"},
 interval=1.0,
 chance=1,
 action = function(pos) 
-	check_msgs(pos)
+	--check_msgs(pos)
 	register(pos)
 end
 })
@@ -59,6 +71,11 @@ minetest.register_node("wireless:recv", {  -- Relays wireless to digiline
 	{
 		receptor = {},
 		--effector = {},
+	},
+	wireless = {
+		receiver = {
+			action = check_msgs 
+		}
 	},
 	drawtype = "nodebox",
 	node_box = {
