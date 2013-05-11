@@ -3,7 +3,7 @@ minetest-wireless
 
 wireless digilines mod. 
 No compilation needed.
-I recommend that you drop this folder into games/minetest_game/mods/minetest-mod-digilines, and rename it to just "wireless" .
+Drop this folder into games/minetest_game/mods/ and rename it to just "wireless" .
 Depends upon whole mesecons, digilines modpacks.
 Crafting recipes can be found at the end of init.lua .
 
