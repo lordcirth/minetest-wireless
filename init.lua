@@ -53,7 +53,6 @@ nodenames = {"wireless:recv"},
 interval=1.0,
 chance=1,
 action = function(pos) 
-	--check_msgs(pos)
 	register(pos)
 end
 })
@@ -88,9 +87,6 @@ minetest.register_node("wireless:recv", {  -- Relays wireless to digiline
 		local meta = minetest.env:get_meta(pos)
 		meta:set_string("infotext", "Wireless digiline receiver")
 		 register(pos)  --register and record RID
-	end,
-	on_punch = function(pos)
-		check_msgs(pos)
 	end,
 })
 
