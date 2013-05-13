@@ -1,7 +1,7 @@
 receivers = {}
 -- ================
 -- Function declarations
- -- ================
+-- ================
 
  function getspec(node)
 	if not minetest.registered_nodes[node.name] then return false end -- ignore unknown nodes
@@ -59,7 +59,7 @@ end
 
 -- ================
 -- Node declarations
- -- ================
+-- ================
 
 minetest.register_node("wireless:recv", {  -- Relays wireless to digiline
 	paramtype = "light",
@@ -123,7 +123,7 @@ minetest.register_node("wireless:trans", { -- Relays digiline to wireless
 
 -- ================
 --Crafting recipes
- -- ================
+-- ================
  
  minetest.register_craft({
 	 output = 'wireless:trans',
