@@ -13,6 +13,7 @@ end
 	local y_dist = target_pos.y - pos.y
 	local z_dist = target_pos.z- pos.z
 	local dist = math.sqrt(x_dist^2 + y_dist^2 + z_dist^2)
+	print(dist)
 	return dist
  end
  
@@ -22,8 +23,11 @@ end
 	for i=1, #receivers do  -- Iterate over receivers
 		if get_range(pos, receivers[i]) <= range then -- max range
 			local target_node = minetest.env:get_node(receivers[i])
-			local target_spec = getspec(target_node)	
-			target_spec.receiver.action(receivers[i], channel, msg)
+			if getspec(target_node) ~= nil then
+				local target_spec = getspec(target_node)	
+				target_spec.receiver.action(receivers[i], channel, msg)
+			else print("Receiver no longer there")
+			end
 		end
 	end
 end
